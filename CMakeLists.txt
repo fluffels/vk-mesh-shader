@@ -6,7 +6,7 @@ project (vk-template)
 find_package(Vulkan REQUIRED)
 
 set(GLSL_VALIDATOR "$ENV{VULKAN_SDK}/Bin/glslc.exe")
-file(GLOB_RECURSE GLSL_FILES "shaders/*.vert" "shaders/*.frag")
+file(GLOB_RECURSE GLSL_FILES "shaders/*.vert" "shaders/*.frag" "shaders/*.mesh")
 foreach(GLSL_FILE ${GLSL_FILES})
     set(SPIRV_FILE "${GLSL_FILE}.spv")
     add_custom_command(
