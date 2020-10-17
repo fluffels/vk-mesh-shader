@@ -115,7 +115,7 @@ int MainLoop(
     HWND window = CreateWindowEx(
         0,
         "MainWindowClass",
-        "kwark",
+        "Vk Mesh Shader Example",
         WS_POPUP | WS_VISIBLE,
         CW_USEDEFAULT,
         CW_USEDEFAULT,
