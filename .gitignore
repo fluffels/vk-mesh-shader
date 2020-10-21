@@ -33,6 +33,7 @@
 
 # Build Artifacts
 build
+*.spv
 
 # CMake Artifacts
 CMakeCache.txt
