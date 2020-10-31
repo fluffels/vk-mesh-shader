@@ -94,7 +94,7 @@ void renderMesh(
         //     nullptr
         // );
 
-        vk.cmdDrawMeshTasksNV(cmd, 10, 0);
+        vk.cmdDrawMeshTasksNV(cmd, 20*20, 0);
 
         vkCmdEndRenderPass(cmd);
 
