@@ -39,6 +39,9 @@ build
 CMakeCache.txt
 CmakeFiles
 
+# Debug Artifacsts
+RenderDoc.cap
+
 # Run Artifacts
 myeasylog.log
 save.dat

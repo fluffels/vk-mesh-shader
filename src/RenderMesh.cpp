@@ -47,12 +47,12 @@ void renderMesh(
         mesh
     );
 
-    updateUniformBuffer(
-        vk.device,
-        pipeline.descriptorSet,
-        0,
-        vk.mvp.handle
-    );
+    // updateUniformBuffer(
+    //     vk.device,
+    //     pipeline.descriptorSet,
+    //     0,
+    //     vk.mvp.handle
+    // );
 
     uint32_t framebufferCount = vk.swap.images.size();
     cmds.resize(framebufferCount);
@@ -83,44 +83,18 @@ void renderMesh(
             VK_PIPELINE_BIND_POINT_GRAPHICS,
             pipeline.handle
         );
-        vkCmdBindDescriptorSets(
-            cmd,
-            VK_PIPELINE_BIND_POINT_GRAPHICS,
-            pipeline.layout,
-            0,
-            1,
-            &pipeline.descriptorSet,
-            0,
-            nullptr
-        );
-        VkDeviceSize offsets[] = {0};
+        // vkCmdBindDescriptorSets(
+        //     cmd,
+        //     VK_PIPELINE_BIND_POINT_GRAPHICS,
+        //     pipeline.layout,
+        //     0,
+        //     1,
+        //     &pipeline.descriptorSet,
+        //     0,
+        //     nullptr
+        // );
 
-        vkCmdBindVertexBuffers(
-            cmd,
-            0, 1,
-            &mesh.vBuff.handle,
-            offsets
-        );
-        vkCmdBindIndexBuffer(
-            cmd,
-            mesh.iBuff.handle,
-            0,
-            VK_INDEX_TYPE_UINT32
-        );
-        Vec3 white = {1, 1, 1};
-        vkCmdPushConstants(
-            cmd,
-            pipeline.layout,
-            VK_SHADER_STAGE_VERTEX_BIT,
-            0,
-            sizeof(white),
-            &white
-        );
-        vkCmdDrawIndexed(
-            cmd,
-            indices.size(),
-            1, 0, 0, 0
-        );
+        vk.cmdDrawMeshTasksNV(cmd, 1, 0);
 
         vkCmdEndRenderPass(cmd);
 
