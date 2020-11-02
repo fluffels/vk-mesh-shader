@@ -148,7 +148,7 @@ int MainLoop(
     initVK(vk);
 
     Camera camera;
-    camera.setFOV(90);
+    camera.setFOV(45);
     camera.setAR(vk.swap.extent.width, vk.swap.extent.height);
     camera.height = vk.swap.extent.height;
     camera.width = vk.swap.extent.width;
@@ -156,7 +156,7 @@ int MainLoop(
     camera.farz = 10.f;
 
     camera.down = { 0, 1, 0 };
-    camera.eye = { 0, 0, -.9f };
+    camera.eye = { 0, 0, -5.f };
     camera.at = camera.eye;
     camera.at.z += 1;
 
