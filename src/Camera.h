@@ -3,21 +3,25 @@
 #include "glm/mat4x4.hpp"
 #include "glm/vec3.hpp"
 
+#include "MathLib.h"
+
 using glm::mat4;
 using glm::vec3;
 
 struct Camera {
-    vec3 eye;
-    vec3 at;
-    vec3 up;
+    Vec3 at;
+    Vec3 down;
+    Vec3 eye;
 
     float fov;
     float ar;
 
     float nearz;
     float farz;
+    uint32_t width;
+    uint32_t height;
 
-    mat4 get() const;
+    void get(float* m);
 
     void setAR(uint32_t, uint32_t);
     void setFOV(float);

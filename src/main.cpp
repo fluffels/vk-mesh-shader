@@ -26,9 +26,7 @@ using std::setw;
 
 #pragma pack (push, 1)
 struct Uniforms {
-    mat4 mvp;
-    vec3 origin;
-    float elapsedS;
+    float mvp[16];
 };
 #pragma pack (pop)
 
@@ -152,23 +150,15 @@ int MainLoop(
     Camera camera;
     camera.setFOV(90);
     camera.setAR(vk.swap.extent.width, vk.swap.extent.height);
+    camera.height = vk.swap.extent.height;
+    camera.width = vk.swap.extent.width;
     camera.nearz = 1.f;
-    camera.farz = 10000.f;
-    camera.eye = { 0, 0, 0 };
-    camera.at = camera.eye;
-    camera.at.z += -1;
-    camera.up = { 0, 1, 0 };
+    camera.farz = 10.f;
 
-    {
-        FILE* save;
-        auto err = fopen_s(&save, "save.dat", "r");
-        if (!err) {
-            fread(&camera.eye, sizeof(camera.eye), 1, save);
-            fread(&camera.at, sizeof(camera.at), 1, save);
-            fread(&camera.up, sizeof(camera.up), 1, save);
-            fclose(save);
-        }
-    }
+    camera.down = { 0, 1, 0 };
+    camera.eye = { 0, 0, -.9f };
+    camera.at = camera.eye;
+    camera.at.z += 1;
 
     vector<VkCommandBuffer> meshCmds;
     vector<VkCommandBuffer> textCmds;
@@ -216,10 +206,7 @@ int MainLoop(
 
             QueryPerformanceCounter(&frameStart);
                 Uniforms uniforms = {};
-                uniforms.mvp = camera.get();
-                uniforms.origin = camera.eye;
-                uniforms.elapsedS = (frameStart.QuadPart - epoch.QuadPart) /
-                    (float)counterFrequency.QuadPart;
+                camera.get(uniforms.mvp);
                 updateMVP(vk, &uniforms, sizeof(uniforms));
 
                 vector<vector<VkCommandBuffer>> cmdss;
@@ -258,10 +245,9 @@ int MainLoop(
                 );
             }
             if (keyboard['R']) {
+                camera.at = { 0, 0, 1 };
+                camera.down = { 0, 1, 0 };
                 camera.eye = { 0, 0, 0 };
-                camera.at = camera.eye;
-                camera.at.z -= 1;
-                camera.up = { 0, 1, 0 };
             }
 
             float deltaMouseRotate =
@@ -288,9 +274,9 @@ int MainLoop(
         FILE* save;
         auto err = fopen_s(&save, "save.dat", "w");
         if (!err) {
-            fwrite(&camera.eye, sizeof(camera.eye), 1, save);
             fwrite(&camera.at, sizeof(camera.at), 1, save);
-            fwrite(&camera.up, sizeof(camera.up), 1, save);
+            fwrite(&camera.down, sizeof(camera.down), 1, save);
+            fwrite(&camera.eye, sizeof(camera.eye), 1, save);
             fclose(save);
         } else {
             LOG(ERROR) << strerror(err);
