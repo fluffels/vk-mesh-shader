@@ -1,5 +1,8 @@
 #pragma warning(disable: 4267)
 
+#include <cstdlib>
+#include <ctime>
+
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb/stb_image.h"
 
@@ -12,7 +15,37 @@ struct Vertex {
 
 static VulkanMesh mesh;
 static vector<Vertex> vertices;
-static vector<uint32_t> indices;
+
+void samplePoissonDisk(vector<Vertex>& vertices) {
+    const float distMin = 1.f;
+    const float cellSize = distMin / sqrtf(2.f);
+
+    const uint32_t gridWidth = 10;
+    const uint32_t gridHeight = 10;
+    const uint32_t gridSize = gridWidth * gridHeight;
+
+    vertices.resize(gridSize);
+
+    srand(time(NULL));
+
+    for (uint32_t xi = 0; xi < gridWidth; xi++) {
+        for (uint32_t zi = 0; zi < gridHeight; zi++) {
+            auto i = zi * gridWidth + xi;
+            auto& v = vertices[i];
+            auto offsetX = rand() / (float)RAND_MAX;
+            auto offsetZ = rand() / (float)RAND_MAX;
+            v.position.x = xi * distMin + offsetX;
+            v.position.z = zi * distMin + offsetZ;
+        }
+    }
+
+    const float depthMax = 10.f;
+    const float depthMin = -depthMax;
+    const float widthMax = depthMax;
+    const float widthMin = -widthMax;
+
+    vector<Vertex> processList;
+}
 
 void renderMesh(
     Vulkan& vk,
@@ -25,16 +58,7 @@ void renderMesh(
         pipeline
     );
 
-    auto& v0 = vertices.emplace_back();
-    v0.position = {-1, 1, -5};
-    auto& v1 = vertices.emplace_back();
-    v1.position = {0, -1, -5};
-    auto& v2 = vertices.emplace_back();
-    v2.position = {1, 1, -5};
-
-    indices.push_back(0);
-    indices.push_back(1);
-    indices.push_back(2);
+    samplePoissonDisk(vertices);
 
     uploadMesh(
         vk.device,
@@ -42,8 +66,6 @@ void renderMesh(
         vk.queueFamily,
         vertices.data(),
         vertices.size()*sizeof(Vertex),
-        indices.data(),
-        indices.size()*sizeof(uint32_t),
         mesh
     );
 
