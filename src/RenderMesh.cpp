@@ -10,19 +10,20 @@
 #include "RenderMesh.h"
 
 struct Vertex {
-    Vec3 position;
+    Vec4 position;
 };
 
 static VulkanMesh mesh;
 static vector<Vertex> vertices;
 
-void samplePoissonDisk(vector<Vertex>& vertices) {
-    const float distMin = 1.f;
-    const float cellSize = distMin / sqrtf(2.f);
+const float distMin = 1.f;
+const float cellSize = distMin / sqrtf(2.f);
 
-    const uint32_t gridWidth = 10;
-    const uint32_t gridHeight = 10;
-    const uint32_t gridSize = gridWidth * gridHeight;
+const uint32_t gridWidth = 10;
+const uint32_t gridHeight = 10;
+const uint32_t gridSize = gridWidth * gridHeight;
+
+void samplePoissonDisk(vector<Vertex>& vertices) {
 
     vertices.resize(gridSize);
 
@@ -35,7 +36,9 @@ void samplePoissonDisk(vector<Vertex>& vertices) {
             auto offsetX = rand() / (float)RAND_MAX;
             auto offsetZ = rand() / (float)RAND_MAX;
             v.position.x = xi * distMin + offsetX;
+            v.position.y = 0;
             v.position.z = zi * distMin + offsetZ;
+            v.position.w = 0;
         }
     }
 
@@ -60,20 +63,28 @@ void renderMesh(
 
     samplePoissonDisk(vertices);
 
-    uploadMesh(
-        vk.device,
-        vk.memories,
-        vk.queueFamily,
-        vertices.data(),
-        vertices.size()*sizeof(Vertex),
-        mesh
-    );
-
     updateUniformBuffer(
         vk.device,
         pipeline.descriptorSet,
         0,
         vk.mvp.handle
+    );
+
+    VulkanBuffer vertexBuffer = {};
+    uploadStorageBuffer(
+        vk.device,
+        vk.memories,
+        vk.queueFamily,
+        vertices.data(),
+        vertices.size() * sizeof(Vertex),
+        vertexBuffer
+    );
+
+    updateStorageBuffer(
+        vk.device,
+        pipeline.descriptorSet,
+        1,
+        vertexBuffer.handle
     );
 
     uint32_t framebufferCount = vk.swap.images.size();
@@ -116,7 +127,7 @@ void renderMesh(
             nullptr
         );
 
-        vk.cmdDrawMeshTasksNV(cmd, 20*20, 0);
+        vk.cmdDrawMeshTasksNV(cmd, gridSize, 0);
 
         vkCmdEndRenderPass(cmd);
 

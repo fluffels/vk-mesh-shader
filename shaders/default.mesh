@@ -4,6 +4,14 @@
  
 layout(local_size_x=1) in;
 layout(triangles, max_vertices=3, max_primitives=1) out;
+
+struct Vertex {
+  vec3 position;
+};
+
+layout(binding=1) readonly buffer Vertices {
+  Vertex vertices[];
+};
  
 // Custom vertex output block
 layout (location=0) out PerVertexData
@@ -19,18 +27,20 @@ void main()
 {
   const float d = .1f;
   const uint i = gl_WorkGroupID.x;
-  const uint x = i % 20;
   const uint y = i / 20;
-  float yb = 1 - y * d;
-  float yt = yb - d;
+  float yb = 0;
+  float yt = yb + d;
+
+  vec3 p = vertices[i].position;
+  const float x = p.x;
   float xl = x * d - 1;
   float xr = xl + d;
   float xc = (xl + xr) / 2;
 
   // Vertices position
-  gl_MeshVerticesNV[0].gl_Position = uniforms.mvp * vec4(xc, yt, 0, 1); 
-  gl_MeshVerticesNV[1].gl_Position = uniforms.mvp * vec4(xr, yb, 0, 1); 
-  gl_MeshVerticesNV[2].gl_Position = uniforms.mvp * vec4(xl, yb, 0, 1); 
+  gl_MeshVerticesNV[0].gl_Position = uniforms.mvp * vec4(xc, -1, p.z, 1); 
+  gl_MeshVerticesNV[1].gl_Position = uniforms.mvp * vec4(xr, 0, p.z, 1); 
+  gl_MeshVerticesNV[2].gl_Position = uniforms.mvp * vec4(xl, 0, p.z, 1); 
  
   // Vertices color
   v_out[0].color = vec4(colors[0], 1.0);
