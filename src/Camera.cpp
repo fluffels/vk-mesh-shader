@@ -14,33 +14,7 @@ using glm::vec4;
 
 void Camera::get(float* m) {
     float view[16];
-    matrixInit(view);
-
-    Vec3 z;
-    vectorSub(at, eye, z);
-    vectorNormalize(z);
-
-    Vec3 x;
-    vectorCross(down, z, x);
-    vectorNormalize(x);
-
-    Vec3 y;
-    vectorCross(z, x, y);
-    vectorNormalize(y);
-
-    view[0] = x.x;
-    view[1] = x.y;
-    view[2] = x.z;
-
-    view[4] = y.x;
-    view[5] = y.y;
-    view[6] = y.z;
-
-    view[8] = z.x;
-    view[9] = z.y;
-    view[10] = z.z;
-
-    matrixTranslate(-eye.x, -eye.y, -eye.z, view);
+    matrixView(eye, at, down, view);
 
     float proj[16];
     matrixInit(proj);
