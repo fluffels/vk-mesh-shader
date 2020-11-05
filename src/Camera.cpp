@@ -17,20 +17,7 @@ void Camera::get(float* m) {
     matrixView(eye, at, down, view);
 
     float proj[16];
-    matrixInit(proj);
-
-    const float ar = width / (float)height;
-    const float halfFOV = fov / 2.f;
-    const float halfTanFOV = tanf(halfFOV);
-
-    proj[0] = 1 / (ar * halfTanFOV);
-    proj[5] = 1 / halfTanFOV;
-    proj[10] = 1 / (farz - nearz);
-    proj[11] = 1;
-    proj[14] = -nearz / (farz - nearz);
-
-    mat4 test(1.0);
-    test = perspective(fov, ar, nearz, farz);
+    matrixProjection(width, height, fov, farz, nearz, proj);
 
     matrixMultiply(proj, view, m);
 }
