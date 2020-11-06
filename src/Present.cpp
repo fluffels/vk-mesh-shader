@@ -5,10 +5,10 @@
 
 #undef max
 
-void updateMVP(Vulkan& vk, void* data, size_t length) {
-    auto dst = mapMemory(vk.device, vk.mvp.handle, vk.mvp.memory);
+void updateUniforms(Vulkan& vk, void* data, size_t length) {
+    auto dst = mapMemory(vk.device, vk.uniforms.handle, vk.uniforms.memory);
         memcpy(dst, data, length);
-    unMapMemory(vk.device, vk.mvp.memory);
+    unMapMemory(vk.device, vk.uniforms.memory);
 }
 
 void present(Vulkan& vk, vector<vector<VkCommandBuffer>>& cmdss) {

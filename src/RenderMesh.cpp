@@ -67,7 +67,7 @@ void renderMesh(
         vk.device,
         pipeline.descriptorSet,
         0,
-        vk.mvp.handle
+        vk.uniforms.handle
     );
 
     VulkanBuffer vertexBuffer = {};
