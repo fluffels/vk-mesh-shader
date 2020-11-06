@@ -10,18 +10,6 @@ using glm::perspective;
 using glm::rotate;
 using glm::vec4;
 
-void Camera::get(float* m) {
-    matrixProjection(width, height, fov, farz, nearz, m);
-}
-
-void Camera::setAR(uint32_t w, uint32_t h) {
-    ar = (float)w / (float)h;
-}
-
-void Camera::setFOV(float f) {
-    fov = glm::radians(f);
-}
-
 void Camera::back(float d) {
     forward(-d);
 }

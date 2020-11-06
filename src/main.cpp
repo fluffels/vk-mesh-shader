@@ -151,18 +151,18 @@ int MainLoop(
     vk.swap.surface = getSurface(window, instance, vk.handle);
     initVK(vk);
 
-    Camera camera;
-    camera.setFOV(45);
-    camera.setAR(vk.swap.extent.width, vk.swap.extent.height);
-    camera.height = vk.swap.extent.height;
-    camera.width = vk.swap.extent.width;
-    camera.nearz = 1.f;
-    camera.farz = 10.f;
+    Uniforms uniforms = {};
+    auto fov = toRadians(45);
+    auto height = vk.swap.extent.height;
+    auto width = vk.swap.extent.width;
+    auto nearz = 1.f;
+    auto farz = 10.f;
+    matrixProjection(width, height, fov, farz, nearz, uniforms.proj);
 
+    Camera camera;
     camera.down = { 0, 1, 0 };
     camera.eye = { 0, 0, -5.f };
     camera.at = { 0, 0, 1 };
-
     quaternionInit(camera.rotation);
 
     vector<VkCommandBuffer> meshCmds;
@@ -210,8 +210,6 @@ int MainLoop(
             recordTextCommandBuffers(vk, textCmds, debugString);
 
             QueryPerformanceCounter(&frameStart);
-                Uniforms uniforms = {};
-                camera.get(uniforms.proj);
                 uniforms.eye = {
                     camera.eye.x,
                     camera.eye.y,
