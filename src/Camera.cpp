@@ -13,13 +13,7 @@ using glm::vec4;
 #define PI 3.14159265358979323846f
 
 void Camera::get(float* m) {
-    float view[16];
-    matrixView(eye, at, down, view);
-
-    float proj[16];
-    matrixProjection(width, height, fov, farz, nearz, proj);
-
-    matrixMultiply(proj, view, m);
+    matrixProjection(width, height, fov, farz, nearz, m);
 }
 
 void Camera::setAR(uint32_t w, uint32_t h) {

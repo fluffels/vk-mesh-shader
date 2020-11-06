@@ -27,6 +27,7 @@ using std::setw;
 #pragma pack (push, 1)
 struct Uniforms {
     float mvp[16];
+    Vec4 eye;
 };
 #pragma pack (pop)
 
@@ -157,8 +158,7 @@ int MainLoop(
 
     camera.down = { 0, 1, 0 };
     camera.eye = { 0, 0, -5.f };
-    camera.at = camera.eye;
-    camera.at.z += 1;
+    camera.at = { 0, 0, 1 };
 
     vector<VkCommandBuffer> meshCmds;
     vector<VkCommandBuffer> textCmds;
@@ -207,6 +207,12 @@ int MainLoop(
             QueryPerformanceCounter(&frameStart);
                 Uniforms uniforms = {};
                 camera.get(uniforms.mvp);
+                uniforms.eye = {
+                    camera.eye.x,
+                    camera.eye.y,
+                    camera.eye.z,
+                    0
+                };
                 updateUniforms(vk, &uniforms, sizeof(uniforms));
 
                 vector<vector<VkCommandBuffer>> cmdss;
