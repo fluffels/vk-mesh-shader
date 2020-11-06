@@ -10,8 +10,6 @@ using glm::perspective;
 using glm::rotate;
 using glm::vec4;
 
-#define PI 3.14159265358979323846f
-
 void Camera::get(float* m) {
     matrixProjection(width, height, fov, farz, nearz, m);
 }
@@ -33,27 +31,28 @@ void Camera::left(float d) {
 }
 
 void Camera::forward(float d) {
-    Vec3 z;
-    vectorSub(at, eye, z);
-    vectorNormalize(z);
-    vectorScale(d, z);
-    vectorAdd(at, z, at);
-    vectorAdd(eye, z, eye);
+    Quaternion dir = {};
+    dir.z = 1;
+    quaternionUnrotate(rotation, dir);
+    eye.x += d * dir.x;
+    eye.y += d * dir.y;
+    eye.z += d * dir.z;
 }
 
 void Camera::right(float d) {
-    Vec3 z;
-    vectorSub(at, eye, z);
-    vectorNormalize(z);
-    Vec3 right;
-    vectorCross(down, z, right);
-    vectorNormalize(right);
-    vectorScale(d, right);
-    vectorAdd(at, right, at);
-    vectorAdd(eye, right, eye);
+    Quaternion dir = {};
+    dir.x = 1;
+    quaternionUnrotate(rotation, dir);
+    eye.x += d * dir.x;
+    eye.y += d * dir.y;
+    eye.z += d * dir.z;
 }
 
 void Camera::rotateY(float d) {
+    auto rad = toRadians(d);
+    auto delta = quaternionFromAngleAxis(0, -1, 0, rad);
+    rotation = quaternionMultiply(delta, rotation);
+    quaternionNormalize(rotation);
 }
 
 void Camera::rotateX(float d) {

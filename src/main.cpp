@@ -17,6 +17,8 @@ INITIALIZE_EASYLOGGINGPP
 #include "Vulkan.h"
 #include "Win32.h"
 
+#include "MathLib.cpp"
+
 using std::exception;
 using std::setprecision;
 using std::fixed;
@@ -28,6 +30,7 @@ using std::setw;
 struct Uniforms {
     float mvp[16];
     Vec4 eye;
+    Quaternion rotation;
 };
 #pragma pack (pop)
 
@@ -160,6 +163,8 @@ int MainLoop(
     camera.eye = { 0, 0, -5.f };
     camera.at = { 0, 0, 1 };
 
+    quaternionInit(camera.rotation);
+
     vector<VkCommandBuffer> meshCmds;
     vector<VkCommandBuffer> textCmds;
 
@@ -213,6 +218,7 @@ int MainLoop(
                     camera.eye.z,
                     0
                 };
+                uniforms.rotation = camera.rotation;
                 updateUniforms(vk, &uniforms, sizeof(uniforms));
 
                 vector<vector<VkCommandBuffer>> cmdss;

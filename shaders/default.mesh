@@ -20,6 +20,7 @@ layout (location=0) out PerVertexData
 } v_out[];  // [max_vertices]
 
 #include "uniforms.glsl"
+#include "quaternion.glsl"
  
 const vec3 colors[3] = {vec3(1.0,0.0,0.0), vec3(0.0,1.0,0.0), vec3(0.0,0.0,1.0)};
  
@@ -44,6 +45,10 @@ void main()
   p0 -= uniforms.eye;
   p1 -= uniforms.eye;
   p2 -= uniforms.eye;
+
+  p0 = rotate_vertex_position(uniforms.rotation, p0);
+  p1 = rotate_vertex_position(uniforms.rotation, p1);
+  p2 = rotate_vertex_position(uniforms.rotation, p2);
 
   // Vertices position
   gl_MeshVerticesNV[0].gl_Position = uniforms.mvp * p0; 

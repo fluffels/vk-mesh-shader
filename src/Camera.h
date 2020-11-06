@@ -21,6 +21,8 @@ struct Camera {
     uint32_t width;
     uint32_t height;
 
+    Quaternion rotation;
+
     void get(float* m);
 
     void setAR(uint32_t, uint32_t);
