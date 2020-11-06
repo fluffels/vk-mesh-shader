@@ -207,7 +207,7 @@ int MainLoop(
             QueryPerformanceCounter(&frameStart);
                 Uniforms uniforms = {};
                 camera.get(uniforms.mvp);
-                updateMVP(vk, &uniforms, sizeof(uniforms));
+                updateUniforms(vk, &uniforms, sizeof(uniforms));
 
                 vector<vector<VkCommandBuffer>> cmdss;
                 cmdss.push_back(meshCmds);
