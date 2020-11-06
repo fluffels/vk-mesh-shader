@@ -1,15 +1,6 @@
 #include "Camera.h"
 #include "MathLib.cpp"
 
-#include <glm/gtc/matrix_transform.hpp>
-
-using glm::cross;
-using glm::lookAt;
-using glm::normalize;
-using glm::perspective;
-using glm::rotate;
-using glm::vec4;
-
 void Camera::back(float d) {
     forward(-d);
 }
