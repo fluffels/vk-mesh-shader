@@ -28,7 +28,7 @@ using std::setw;
 
 #pragma pack (push, 1)
 struct Uniforms {
-    float mvp[16];
+    float proj[16];
     Vec4 eye;
     Quaternion rotation;
 };
@@ -211,7 +211,7 @@ int MainLoop(
 
             QueryPerformanceCounter(&frameStart);
                 Uniforms uniforms = {};
-                camera.get(uniforms.mvp);
+                camera.get(uniforms.proj);
                 uniforms.eye = {
                     camera.eye.x,
                     camera.eye.y,
