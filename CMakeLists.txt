@@ -34,7 +34,6 @@ add_executable(
     lib/easyloggingpp/src/easylogging++.cc
     src/Main.cpp
     src/util.cpp
-    src/Camera.cpp
     src/DirectInput.cpp
     src/Controller.cpp
     src/Mouse.cpp

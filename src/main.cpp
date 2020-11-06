@@ -8,7 +8,6 @@
 #include "easylogging++.h"
 INITIALIZE_EASYLOGGINGPP
 
-#include "Camera.h"
 #include "DirectInput.h"
 #include "Mouse.h"
 #include "Present.h"
@@ -151,17 +150,16 @@ int MainLoop(
     vk.swap.surface = getSurface(window, instance, vk.handle);
     initVK(vk);
 
-    Uniforms uniforms = {};
     auto fov = toRadians(45);
     auto height = vk.swap.extent.height;
     auto width = vk.swap.extent.width;
     auto nearz = 1.f;
     auto farz = 10.f;
-    matrixProjection(width, height, fov, farz, nearz, uniforms.proj);
 
-    Camera camera;
-    camera.eye = { 0, 0, -5.f };
-    quaternionInit(camera.rotation);
+    Uniforms uniforms = {};
+    uniforms.eye = { 0, 0, -5.f, 0 };
+    quaternionInit(uniforms.rotation);
+    matrixProjection(width, height, fov, farz, nearz, uniforms.proj);
 
     vector<VkCommandBuffer> meshCmds;
     vector<VkCommandBuffer> textCmds;
@@ -205,18 +203,9 @@ int MainLoop(
             char debugString[1024];
             snprintf(debugString, 1024, "%.2f FPS", fps);
 
-            recordTextCommandBuffers(vk, textCmds, debugString);
-
             QueryPerformanceCounter(&frameStart);
-                uniforms.eye = {
-                    camera.eye.x,
-                    camera.eye.y,
-                    camera.eye.z,
-                    0
-                };
-                uniforms.rotation = camera.rotation;
+                recordTextCommandBuffers(vk, textCmds, debugString);
                 updateUniforms(vk, &uniforms, sizeof(uniforms));
-
                 vector<vector<VkCommandBuffer>> cmdss;
                 cmdss.push_back(meshCmds);
                 cmdss.push_back(textCmds);
@@ -230,16 +219,16 @@ int MainLoop(
 
             float deltaMove = DELTA_MOVE_PER_S * frameTime;
             if (keyboard['W']) {
-                camera.forward(deltaMove);
+                moveAlongQuaternion(deltaMove, uniforms.rotation, uniforms.eye);
             }
             if (keyboard['S']) {
-                camera.back(deltaMove);
+                moveAlongQuaternion(-deltaMove, uniforms.rotation, uniforms.eye);
             }
             if (keyboard['A']) {
-                camera.left(deltaMove);
+                movePerpendicularToQuaternion(-deltaMove, uniforms.rotation, uniforms.eye);
             }
             if (keyboard['D']) {
-                camera.right(deltaMove);
+                movePerpendicularToQuaternion(deltaMove, uniforms.rotation, uniforms.eye);
             }
             if (keyboard['F']) {
                 SetWindowPos(
@@ -253,25 +242,25 @@ int MainLoop(
                 );
             }
             if (keyboard['R']) {
-                camera.eye = { 0, 0, -5 };
+                uniforms.eye = { 0, 0, -5 };
             }
 
             float deltaMouseRotate =
                 MOUSE_SENSITIVITY;
             auto mouseDelta = mouse->getDelta();
 
-            camera.rotateY((float)mouseDelta.x * deltaMouseRotate);
-            camera.rotateX((float)-mouseDelta.y * deltaMouseRotate);
+            rotateQuaternionY(-mouseDelta.x * deltaMouseRotate, uniforms.rotation);
+            // camera.rotateX((float)-mouseDelta.y * deltaMouseRotate);
 
             float deltaJoystickRotate =
                 DELTA_ROTATE_PER_S * frameTime * JOYSTICK_SENSITIVITY;
             if (controller) {
                 auto state = controller->getState();
 
-                camera.rotateY(state.rX * deltaJoystickRotate);
-                camera.rotateX(-state.rY * deltaJoystickRotate);
-                camera.right(state.x * deltaMove);
-                camera.forward(-state.y * deltaMove);
+                // camera.rotateY(state.rX * deltaJoystickRotate);
+                // camera.rotateX(-state.rY * deltaJoystickRotate);
+                // camera.right(state.x * deltaMove);
+                // camera.forward(-state.y * deltaMove);
             }
         }
     }
@@ -280,7 +269,8 @@ int MainLoop(
         FILE* save;
         auto err = fopen_s(&save, "save.dat", "w");
         if (!err) {
-            fwrite(&camera.eye, sizeof(camera.eye), 1, save);
+            fwrite(&uniforms.rotation, sizeof(uniforms.rotation), 1, save);
+            fwrite(&uniforms.eye, sizeof(uniforms.eye), 1, save);
             fclose(save);
         } else {
             LOG(ERROR) << strerror(err);
