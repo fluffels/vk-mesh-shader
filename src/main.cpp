@@ -11,12 +11,12 @@ INITIALIZE_EASYLOGGINGPP
 #include "DirectInput.h"
 #include "Mouse.h"
 #include "Present.h"
+#include "Render.h"
 #include "RenderMesh.h"
 #include "RenderText.h"
+#include "State.h"
 #include "Vulkan.h"
 #include "Win32.h"
-
-#include "MathLib.cpp"
 
 using std::exception;
 using std::setprecision;
@@ -25,21 +25,12 @@ using std::setw;
 
 #define WIN32_CHECK(e, m) if (e != S_OK) throw new std::runtime_error(m)
 
-#pragma pack (push, 1)
-struct Uniforms {
-    float proj[16];
-    Vec4 eye;
-    Quaternion rotation;
-};
-#pragma pack (pop)
-
 const int WIDTH = 800;
 const int HEIGHT = 800;
 
-const float DELTA_MOVE_PER_S = 200.f;
-const float DELTA_ROTATE_PER_S = 3.14f;
+const float DELTA_MOVE_PER_S = 1.f;
 const float MOUSE_SENSITIVITY = 0.1f;
-const float JOYSTICK_SENSITIVITY = 100;
+const float JOYSTICK_SENSITIVITY = 5;
 
 bool keyboard[VK_OEM_CLEAR] = {};
 
@@ -91,7 +82,8 @@ WindowProc(
     return DefWindowProc(window, message, wParam, lParam);
 }
 
-int MainLoop(
+int
+WinMain(
     HINSTANCE instance,
     HINSTANCE prevInstance,
     LPSTR commandLine,
@@ -150,21 +142,8 @@ int MainLoop(
     vk.swap.surface = getSurface(window, instance, vk.handle);
     initVK(vk);
 
-    auto fov = toRadians(45);
-    auto height = vk.swap.extent.height;
-    auto width = vk.swap.extent.width;
-    auto nearz = 1.f;
-    auto farz = 10.f;
-
     Uniforms uniforms = {};
-    uniforms.eye = { 0, 0, -5.f, 0 };
-    quaternionInit(uniforms.rotation);
-    matrixProjection(width, height, fov, farz, nearz, uniforms.proj);
-
-    vector<VkCommandBuffer> meshCmds;
-    vector<VkCommandBuffer> textCmds;
-
-    renderMesh(vk, meshCmds);
+    renderInit(vk, uniforms);
 
     DirectInput directInput(instance);
     Controller* controller = directInput.controller;
@@ -204,31 +183,25 @@ int MainLoop(
             snprintf(debugString, 1024, "%.2f FPS", fps);
 
             QueryPerformanceCounter(&frameStart);
-                recordTextCommandBuffers(vk, textCmds, debugString);
                 updateUniforms(vk, &uniforms, sizeof(uniforms));
-                vector<vector<VkCommandBuffer>> cmdss;
-                cmdss.push_back(meshCmds);
-                cmdss.push_back(textCmds);
-                present(vk, cmdss);
-                resetTextCommandBuffers(vk, textCmds);
+                renderFrame(vk, debugString);
             QueryPerformanceCounter(&frameEnd);
-            // SetWindowText(window, buffer);
             frameDelta = frameEnd.QuadPart - frameStart.QuadPart;
             frameTime = (float)frameDelta / counterFrequency.QuadPart;
             fps = counterFrequency.QuadPart / (float)frameDelta;
 
             float deltaMove = DELTA_MOVE_PER_S * frameTime;
             if (keyboard['W']) {
-                moveAlongQuaternion(deltaMove, uniforms.rotation, uniforms.eye);
+                eventMoveForward(deltaMove, uniforms);
             }
             if (keyboard['S']) {
-                moveAlongQuaternion(-deltaMove, uniforms.rotation, uniforms.eye);
+                eventMoveBackward(deltaMove, uniforms);
             }
             if (keyboard['A']) {
-                movePerpendicularToQuaternion(-deltaMove, uniforms.rotation, uniforms.eye);
+                eventMoveLeft(deltaMove, uniforms);
             }
             if (keyboard['D']) {
-                movePerpendicularToQuaternion(deltaMove, uniforms.rotation, uniforms.eye);
+                eventMoveRight(deltaMove, uniforms);
             }
             if (keyboard['F']) {
                 SetWindowPos(
@@ -245,52 +218,25 @@ int MainLoop(
                 uniforms.eye = { 0, 0, -5 };
             }
 
-            float deltaMouseRotate =
-                MOUSE_SENSITIVITY;
             auto mouseDelta = mouse->getDelta();
+            auto mouseDeltaX = mouseDelta.x * MOUSE_SENSITIVITY;
 
-            rotateQuaternionY(-mouseDelta.x * deltaMouseRotate, uniforms.rotation);
-            // camera.rotateX((float)-mouseDelta.y * deltaMouseRotate);
+            eventRotateY(mouseDeltaX, uniforms);
 
-            float deltaJoystickRotate =
-                DELTA_ROTATE_PER_S * frameTime * JOYSTICK_SENSITIVITY;
             if (controller) {
                 auto state = controller->getState();
 
-                // camera.rotateY(state.rX * deltaJoystickRotate);
-                // camera.rotateX(-state.rY * deltaJoystickRotate);
-                // camera.right(state.x * deltaMove);
-                // camera.forward(-state.y * deltaMove);
+                auto joyDeltaRotateX = state.rX * JOYSTICK_SENSITIVITY;
+                eventRotateY(joyDeltaRotateX, uniforms);
+
+                auto joyDeltaMove = deltaMove * JOYSTICK_SENSITIVITY;
+                auto joyDeltaMoveX = state.x * joyDeltaMove;
+                auto joyDeltaMoveY = -state.y * joyDeltaMove;
+                eventMoveRight(joyDeltaMoveX, uniforms);
+                eventMoveForward(joyDeltaMoveY, uniforms);
             }
         }
     }
 
-    {
-        FILE* save;
-        auto err = fopen_s(&save, "save.dat", "w");
-        if (!err) {
-            fwrite(&uniforms.rotation, sizeof(uniforms.rotation), 1, save);
-            fwrite(&uniforms.eye, sizeof(uniforms.eye), 1, save);
-            fclose(save);
-        } else {
-            LOG(ERROR) << strerror(err);
-        }
-    }
-
     return errorCode; 
-}
-
-int
-WinMain(
-    HINSTANCE instance,
-    HINSTANCE prevInstance,
-    LPSTR commandLine,
-    int showCommand
-) {
-    return MainLoop(
-        instance,
-        prevInstance,
-        commandLine,
-        showCommand
-    );
 }

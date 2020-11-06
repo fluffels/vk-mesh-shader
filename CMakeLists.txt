@@ -40,6 +40,8 @@ add_executable(
     src/Present.cpp
     src/RenderMesh.cpp
     src/RenderText.cpp
+    src/Render.cpp
+    src/State.cpp
     src/Win32.cpp
 )
 target_link_libraries(
