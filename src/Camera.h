@@ -3,10 +3,7 @@
 #include "MathLib.h"
 
 struct Camera {
-    Vec3 at;
-    Vec3 down;
     Vec3 eye;
-
     Quaternion rotation;
 
     void back(float);

@@ -160,9 +160,7 @@ int MainLoop(
     matrixProjection(width, height, fov, farz, nearz, uniforms.proj);
 
     Camera camera;
-    camera.down = { 0, 1, 0 };
     camera.eye = { 0, 0, -5.f };
-    camera.at = { 0, 0, 1 };
     quaternionInit(camera.rotation);
 
     vector<VkCommandBuffer> meshCmds;
@@ -255,9 +253,7 @@ int MainLoop(
                 );
             }
             if (keyboard['R']) {
-                camera.at = { 0, 0, 1 };
-                camera.down = { 0, 1, 0 };
-                camera.eye = { 0, 0, 0 };
+                camera.eye = { 0, 0, -5 };
             }
 
             float deltaMouseRotate =
@@ -284,8 +280,6 @@ int MainLoop(
         FILE* save;
         auto err = fopen_s(&save, "save.dat", "w");
         if (!err) {
-            fwrite(&camera.at, sizeof(camera.at), 1, save);
-            fwrite(&camera.down, sizeof(camera.down), 1, save);
             fwrite(&camera.eye, sizeof(camera.eye), 1, save);
             fclose(save);
         } else {
