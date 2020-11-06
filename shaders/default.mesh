@@ -37,10 +37,14 @@ void main()
   float xr = xl + d;
   float xc = (xl + xr) / 2;
 
+  vec4 p0 = vec4(xc, -1, p.z, 1);
+  vec4 p1 = vec4(xr,  0, p.z, 1);
+  vec4 p2 = vec4(xl,  0, p.z, 1);
+
   // Vertices position
-  gl_MeshVerticesNV[0].gl_Position = uniforms.mvp * vec4(xc, -1, p.z, 1); 
-  gl_MeshVerticesNV[1].gl_Position = uniforms.mvp * vec4(xr, 0, p.z, 1); 
-  gl_MeshVerticesNV[2].gl_Position = uniforms.mvp * vec4(xl, 0, p.z, 1); 
+  gl_MeshVerticesNV[0].gl_Position = uniforms.mvp * p0; 
+  gl_MeshVerticesNV[1].gl_Position = uniforms.mvp * p1; 
+  gl_MeshVerticesNV[2].gl_Position = uniforms.mvp * p2; 
  
   // Vertices color
   v_out[0].color = vec4(colors[0], 1.0);
