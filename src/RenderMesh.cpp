@@ -27,7 +27,7 @@ void samplePoissonDisk(vector<Vertex>& vertices) {
 
     vertices.resize(gridSize);
 
-    srand(time(NULL));
+    srand(1);
 
     for (uint32_t xi = 0; xi < gridWidth; xi++) {
         for (uint32_t zi = 0; zi < gridHeight; zi++) {
