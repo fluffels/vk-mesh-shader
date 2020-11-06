@@ -24,8 +24,11 @@ Mouse::Mouse(IDirectInput8* directInput) {
     DI_CHECK(result, "could not acquire mouse");
 }
 
-ivec2 Mouse::getDelta() {
+Vec2i Mouse::getDelta() {
+    Vec2i result = {};
     DIMOUSESTATE state;
     device->GetDeviceState(sizeof(state), &state);
-    return ivec2(state.lX, state.lY);
+    result.x = state.lX;
+    result.y = state.lY;
+    return result;
 }
