@@ -1,6 +1,7 @@
 #include "Render.h"
 #include "RenderMesh.h"
 #include "RenderText.h"
+#include "State.h"
 
 #include "MathLib.cpp"
 
@@ -15,7 +16,7 @@ void renderInit(Vulkan& vk, Uniforms& uniforms) {
     auto farz = 10.f;
     matrixProjection(width, height, fov, farz, nearz, uniforms.proj);
 
-    uniforms.eye = { 0, -2.f, -5.f, 0 };
+    eventPositionReset(uniforms);
 
     quaternionInit(uniforms.rotation);
 

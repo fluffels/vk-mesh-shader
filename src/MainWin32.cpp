@@ -143,6 +143,16 @@ WinMain(
     Uniforms uniforms = {};
     renderInit(vk, uniforms);
 
+    {
+        FILE* save;
+        auto err = fopen_s(&save, "save.dat", "r");
+        if (!err) {
+            fread(&uniforms.eye, sizeof(uniforms.eye), 1, save);
+            fread(&uniforms.rotation, sizeof(uniforms.rotation), 1, save);
+            fclose(save);
+        }
+    }
+
     DirectInput directInput(instance);
     Controller* controller = directInput.controller;
     Mouse* mouse = directInput.mouse;
@@ -213,7 +223,7 @@ WinMain(
                 );
             }
             if (keyboard['R']) {
-                uniforms.eye = { 0, 0, -5 };
+                eventPositionReset(uniforms);
             }
 
             auto mouseDelta = mouse->getDelta();
@@ -233,6 +243,18 @@ WinMain(
                 eventMoveRight(joyDeltaMoveX, uniforms);
                 eventMoveForward(joyDeltaMoveY, uniforms);
             }
+        }
+    }
+
+    {
+        FILE* save;
+        auto err = fopen_s(&save, "save.dat", "w");
+        if (!err) {
+            fwrite(&uniforms.eye, sizeof(uniforms.eye), 1, save);
+            fwrite(&uniforms.rotation, sizeof(uniforms.rotation), 1, save);
+            fclose(save);
+        } else {
+            LOG(ERROR) << strerror(err);
         }
     }
 

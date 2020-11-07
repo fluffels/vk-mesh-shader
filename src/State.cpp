@@ -21,3 +21,7 @@ void eventMoveRight(float d, Uniforms& u) {
 void eventRotateY(float d, Uniforms& u) {
     rotateQuaternionY(-d, u.rotation);
 }
+
+void eventPositionReset(Uniforms& u) {
+    u.eye = { 0, -2.f, -5.f, 0 };
+}
