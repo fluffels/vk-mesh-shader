@@ -1,4 +1,3 @@
-#include "Present.h"
 #include "Render.h"
 #include "RenderMesh.h"
 #include "RenderText.h"

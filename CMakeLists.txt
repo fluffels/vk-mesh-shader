@@ -24,26 +24,31 @@ include_directories(${CMAKE_HOME_DIRECTORY}/lib/easyloggingpp/src)
 include_directories(${CMAKE_HOME_DIRECTORY}/lib/jcwk)
 include_directories(${glm_INCLUDE_DIRS})
 include_directories(${Vulkan_INCLUDE_DIRS})
-add_executable(
-    main
-    WIN32
-    Shaders
+
+set(PLATFORM_INDEPENDENT_FILES 
     lib/jcwk/FileSystem.cpp
     lib/jcwk/Vulkan.cpp
     lib/SPIRV-Reflect/spirv_reflect.c
     lib/easyloggingpp/src/easylogging++.cc
-    src/Main.cpp
-    src/util.cpp
-    src/DirectInput.cpp
-    src/Controller.cpp
-    src/Mouse.cpp
-    src/Present.cpp
     src/RenderMesh.cpp
     src/RenderText.cpp
     src/Render.cpp
     src/State.cpp
-    src/Win32.cpp
 )
+
+IF (WIN32)
+    add_executable(
+        main
+        WIN32
+        Shaders
+        src/MainWin32.cpp
+        src/DirectInput.cpp
+        src/Controller.cpp
+        src/Mouse.cpp
+        ${PLATFORM_INDEPENDENT_FILES}
+    )
+ENDIF()
+
 target_link_libraries(
     main
     ${Vulkan_LIBRARIES}

@@ -5,18 +5,18 @@
 
 #include <Windows.h>
 
+
 #include "easylogging++.h"
 INITIALIZE_EASYLOGGINGPP
 
 #include "DirectInput.h"
 #include "Mouse.h"
-#include "Present.h"
 #include "Render.h"
 #include "RenderMesh.h"
 #include "RenderText.h"
 #include "State.h"
 #include "Vulkan.h"
-#include "Win32.h"
+#include <vulkan/vulkan_win32.h>
 
 using std::exception;
 using std::setprecision;
@@ -133,8 +133,6 @@ WinMain(
         SWP_FRAMECHANGED
     );
     ShowCursor(FALSE);
-
-    Win32 platform(instance, window);
 
     Vulkan vk;
     vk.extensions.push_back(VK_KHR_WIN32_SURFACE_EXTENSION_NAME);
