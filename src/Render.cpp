@@ -15,7 +15,7 @@ void renderInit(Vulkan& vk, Uniforms& uniforms) {
     auto farz = 10.f;
     matrixProjection(width, height, fov, farz, nearz, uniforms.proj);
 
-    uniforms.eye = { 0, 0, -5.f, 0 };
+    uniforms.eye = { 0, -2.f, -5.f, 0 };
 
     quaternionInit(uniforms.rotation);
 
