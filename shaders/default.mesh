@@ -34,7 +34,7 @@ void main()
 
   vec3 p = vertices[i].position;
   const float x = p.x;
-  float xl = x * d - 1;
+  float xl = x;
   float xr = xl + d;
   float xc = (xl + xr) / 2;
 
