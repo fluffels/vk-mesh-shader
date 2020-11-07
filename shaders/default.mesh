@@ -51,9 +51,9 @@ void main()
   p2 = rotate_vertex_position(uniforms.rotation, p2);
 
   // Vertices position
-  gl_MeshVerticesNV[0].gl_Position = uniforms.mvp * p0; 
-  gl_MeshVerticesNV[1].gl_Position = uniforms.mvp * p1; 
-  gl_MeshVerticesNV[2].gl_Position = uniforms.mvp * p2; 
+  gl_MeshVerticesNV[0].gl_Position = uniforms.proj * p0; 
+  gl_MeshVerticesNV[1].gl_Position = uniforms.proj * p1; 
+  gl_MeshVerticesNV[2].gl_Position = uniforms.proj * p2; 
  
   // Vertices color
   v_out[0].color = vec4(colors[0], 1.0);
