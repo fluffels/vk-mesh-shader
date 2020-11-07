@@ -9,9 +9,11 @@
 #include "MathLib.h"
 #include "RenderMesh.h"
 
+#pragma pack (push, 1)
 struct Vertex {
     Vec4 position;
 };
+#pragma pack (pop)
 
 static VulkanMesh mesh;
 static vector<Vertex> vertices;
@@ -19,12 +21,11 @@ static vector<Vertex> vertices;
 const float distMin = 1.f;
 const float cellSize = distMin / sqrtf(2.f);
 
-const uint32_t gridWidth = 1000;
+const uint32_t gridWidth = 100;
 const uint32_t gridHeight = gridWidth;
 const uint32_t gridSize = gridWidth * gridHeight;
 
 void samplePoissonDisk(vector<Vertex>& vertices) {
-
     vertices.resize(gridSize);
 
     srand(1);
@@ -33,12 +34,12 @@ void samplePoissonDisk(vector<Vertex>& vertices) {
         for (uint32_t zi = 0; zi < gridHeight; zi++) {
             auto i = zi * gridWidth + xi;
             auto& v = vertices[i];
-            auto offsetX = rand() / (float)RAND_MAX;
-            auto offsetZ = rand() / (float)RAND_MAX;
-            v.position.x = xi * distMin + offsetX;
-            v.position.y = 0;
-            v.position.z = zi * distMin + offsetZ;
-            v.position.w = 0;
+            auto offsetX = (rand() / (float)RAND_MAX) * cellSize;
+            auto offsetZ = (rand() / (float)RAND_MAX) * cellSize;
+            v.position.x = xi * cellSize + offsetX;
+            v.position.y = zi * cellSize + offsetZ;
+            v.position.z = float(rand() % 4) / 4;
+            v.position.w = float(rand() % 4) / 4;
         }
     }
 
