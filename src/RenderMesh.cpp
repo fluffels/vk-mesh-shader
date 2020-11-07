@@ -19,8 +19,8 @@ static vector<Vertex> vertices;
 const float distMin = 1.f;
 const float cellSize = distMin / sqrtf(2.f);
 
-const uint32_t gridWidth = 10;
-const uint32_t gridHeight = 10;
+const uint32_t gridWidth = 1000;
+const uint32_t gridHeight = gridWidth;
 const uint32_t gridSize = gridWidth * gridHeight;
 
 void samplePoissonDisk(vector<Vertex>& vertices) {
@@ -60,6 +60,31 @@ void renderMesh(
         "default",
         pipeline
     );
+
+    int x, y, n;
+    uint8_t* data = stbi_load(
+        "data/grass.png",
+        &x, &y, &n, 4
+    );
+    uint32_t size = x * y * 4;
+    VulkanSampler sampler = {};
+    uploadTexture(
+        vk.device,
+        vk.memories,
+        vk.queue,
+        vk.queueFamily,
+        vk.cmdPoolTransient,
+        x, y, data, size,
+        sampler
+    );
+    updateCombinedImageSampler(
+        vk.device,
+        pipeline.descriptorSet,
+        2,
+        &sampler,
+        1
+    );
+    stbi_image_free(data);
 
     samplePoissonDisk(vertices);
 

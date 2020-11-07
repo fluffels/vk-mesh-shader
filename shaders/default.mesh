@@ -16,7 +16,7 @@ layout(binding=1) readonly buffer Vertices {
 // Custom vertex output block
 layout (location=0) out PerVertexData
 {
-  vec4 color;
+  vec2 uv;
 } v_out[];  // [max_vertices]
 
 #include "uniforms.glsl"
@@ -51,10 +51,10 @@ void main()
   gl_MeshVerticesNV[3].gl_Position = uniforms.proj * p3; 
  
   // Vertices color
-  v_out[0].color = vec4(colors[0], 1.0);
-  v_out[1].color = vec4(colors[1], 1.0);
-  v_out[2].color = vec4(colors[2], 1.0);
-  v_out[3].color = vec4(colors[3], 1.0);
+  v_out[0].uv = vec2(0.f, 0.25f);
+  v_out[1].uv = vec2(0.f, 0.f);
+  v_out[2].uv = vec2(0.25f, 0.25f);
+  v_out[3].uv = vec2(0.25f, 0.f);
  
   // Triangle indices
   gl_PrimitiveIndicesNV[0] = 0;

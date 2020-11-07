@@ -28,7 +28,7 @@ using std::setw;
 const int WIDTH = 800;
 const int HEIGHT = 800;
 
-const float DELTA_MOVE_PER_S = 1.f;
+const float DELTA_MOVE_PER_S = 10.f;
 const float MOUSE_SENSITIVITY = 0.1f;
 const float JOYSTICK_SENSITIVITY = 5;
 

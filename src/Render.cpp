@@ -12,7 +12,7 @@ void renderInit(Vulkan& vk, Uniforms& uniforms) {
     auto fov = toRadians(45);
     auto height = vk.swap.extent.height;
     auto width = vk.swap.extent.width;
-    auto nearz = 1.f;
+    auto nearz = .1f;
     auto farz = 10.f;
     matrixProjection(width, height, fov, farz, nearz, uniforms.proj);
 
