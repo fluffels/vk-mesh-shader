@@ -9,8 +9,8 @@
 #include "easylogging++.h"
 INITIALIZE_EASYLOGGINGPP
 
-#include "DirectInput.h"
-#include "Mouse.h"
+#include "Win32/DirectInput.h"
+#include "Win32/Mouse.h"
 #include "Render.h"
 #include "RenderMesh.h"
 #include "RenderText.h"

@@ -42,9 +42,9 @@ IF (WIN32)
         WIN32
         Shaders
         src/MainWin32.cpp
-        src/DirectInput.cpp
-        src/Controller.cpp
-        src/Mouse.cpp
+        lib/jcwk/Win32/DirectInput.cpp
+        lib/jcwk/Win32/Controller.cpp
+        lib/jcwk/Win32/Mouse.cpp
         ${PLATFORM_INDEPENDENT_FILES}
     )
 ENDIF()
