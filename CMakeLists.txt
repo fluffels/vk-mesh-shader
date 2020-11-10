@@ -18,6 +18,8 @@ foreach(GLSL_FILE ${GLSL_FILES})
 endforeach(GLSL_FILE)
 add_custom_target(Shaders ALL DEPENDS ${SPIRV_FILES})
 
+add_definitions(-DVULKAN_MESH_SHADER)
+
 include_directories(${CMAKE_HOME_DIRECTORY}/src)
 include_directories(${CMAKE_HOME_DIRECTORY}/lib)
 include_directories(${CMAKE_HOME_DIRECTORY}/lib/easyloggingpp/src)
