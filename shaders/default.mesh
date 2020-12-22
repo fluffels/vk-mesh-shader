@@ -25,20 +25,22 @@ void main()
   const uint i = gl_WorkGroupID.x;
   vec4 p = vertices[i].position;
 
-  vec4 p0 = vec4(p.x, 0, p.y, 1);
+  vec4 p0 = vec4(p.x, -p.z, p.y, 1);
   p0 -= uniforms.eye;
   p0 = rotate_vertex_position(uniforms.rotation, p0);
 
   if (p0.z > 0) {
-    const float l = p.z;
     const float d = .25f;
     const float halfD = d * 0.5f;
+    const float r = p.w;
+    const float x = halfD * cos(r);
+    const float y = halfD * sin(r);
 
-    vec4 p1 = vec4(p.x + halfD, -l, p.y, 1);
+    vec4 p1 = vec4(p.x + x, 0, p.y + y, 1);
     p1 -= uniforms.eye;
     p1 = rotate_vertex_position(uniforms.rotation, p1);
 
-    vec4 p2 = vec4(p.x + d, 0, p.y, 1);
+    vec4 p2 = vec4(p.x - x, 0, p.y - y, 1);
     p2 -= uniforms.eye;
     p2 = rotate_vertex_position(uniforms.rotation, p2);
 
@@ -46,8 +48,8 @@ void main()
     gl_MeshVerticesNV[1].gl_Position = uniforms.proj * p1; 
     gl_MeshVerticesNV[2].gl_Position = uniforms.proj * p2; 
   
-    v_out[0].color = vec3(0, 0, 0);
-    v_out[1].color = vec3(0, 1, 0);
+    v_out[0].color = vec3(0, 1, 0);
+    v_out[1].color = vec3(0, 0, 0);
     v_out[2].color = vec3(0, 0, 0);
   
     gl_PrimitiveIndicesNV[0] = 0;
