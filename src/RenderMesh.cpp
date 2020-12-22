@@ -25,7 +25,7 @@ const uint32_t gridWidth = 100;
 const uint32_t gridHeight = gridWidth;
 const uint32_t gridSize = gridWidth * gridHeight;
 
-void samplePoissonDisk(vector<Vertex>& vertices) {
+void generateVertices(vector<Vertex>& vertices) {
     vertices.resize(gridSize);
 
     srand(1);
@@ -38,8 +38,8 @@ void samplePoissonDisk(vector<Vertex>& vertices) {
             auto offsetZ = (rand() / (float)RAND_MAX) * cellSize;
             v.position.x = xi * cellSize + offsetX;
             v.position.y = zi * cellSize + offsetZ;
-            v.position.z = float(rand() % 4) / 4;
-            v.position.w = float(rand() % 4) / 4;
+            v.position.z = (rand() / (float)RAND_MAX) + .5f;
+            v.position.w = (rand() / (float)RAND_MAX) * 2 * 3.14f;
         }
     }
 
@@ -56,7 +56,7 @@ void renderMesh(
     vector<VkCommandBuffer>& cmds
 ) {
     VulkanPipeline pipeline;
-    initVKPipeline(
+    initVKPipelineNoCull(
         vk,
         "default",
         pipeline
@@ -87,7 +87,7 @@ void renderMesh(
     );
     stbi_image_free(data);
 
-    samplePoissonDisk(vertices);
+    generateVertices(vertices);
 
     updateUniformBuffer(
         vk.device,

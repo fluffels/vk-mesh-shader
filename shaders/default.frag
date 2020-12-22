@@ -3,12 +3,10 @@
 
 layout(binding=2) uniform sampler2D sp;
 
-layout(location=0) in vec2 uv;
+layout(location=0) in vec3 inColor;
 
 layout(location=0) out vec4 outColor;
 
 void main() {
-    vec4 spColor = texture(sp, uv);
-    if (spColor.a < .5) discard;
-    outColor = vec4(spColor.rgb, 1);
+    outColor = vec4(inColor, 1);
 }

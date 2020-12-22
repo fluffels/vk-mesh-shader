@@ -17,43 +17,44 @@ layout(binding=1) readonly buffer Vertices {
  
 layout (location=0) out PerVertexData
 {
-  vec2 uv;
+  vec3 color;
 } v_out[];  // [max_vertices]
  
 void main()
 {
   const uint i = gl_WorkGroupID.x;
   vec4 p = vertices[i].position;
-  const float d = .1f;
 
   vec4 p0 = vec4(p.x, 0, p.y, 1);
-
   p0 -= uniforms.eye;
   p0 = rotate_vertex_position(uniforms.rotation, p0);
 
   if (p0.z > 0) {
-    vec4 p1 = vec4(p0.x      , p0.y - 1, p0.z, 1);
-    vec4 p2 = vec4(p0.x + 1.f,     p0.y, p0.z, 1);
-    vec4 p3 = vec4(p0.x + 1.f, p0.y - 1, p0.z, 1);
+    const float l = p.z;
+    const float d = .25f;
+    const float halfD = d * 0.5f;
+
+    vec4 p1 = vec4(p.x + halfD, -l, p.y, 1);
+    p1 -= uniforms.eye;
+    p1 = rotate_vertex_position(uniforms.rotation, p1);
+
+    vec4 p2 = vec4(p.x + d, 0, p.y, 1);
+    p2 -= uniforms.eye;
+    p2 = rotate_vertex_position(uniforms.rotation, p2);
 
     gl_MeshVerticesNV[0].gl_Position = uniforms.proj * p0; 
     gl_MeshVerticesNV[1].gl_Position = uniforms.proj * p1; 
     gl_MeshVerticesNV[2].gl_Position = uniforms.proj * p2; 
-    gl_MeshVerticesNV[3].gl_Position = uniforms.proj * p3; 
   
-    v_out[0].uv = vec2(0.f + p.z, 0.25f + p.w);
-    v_out[1].uv = vec2(0.f + p.z, 0.f + p.w);
-    v_out[2].uv = vec2(0.25f + p.z, 0.25f + p.w);
-    v_out[3].uv = vec2(0.25f + p.z, 0.f + p.w);
+    v_out[0].color = vec3(0, 0, 0);
+    v_out[1].color = vec3(0, 1, 0);
+    v_out[2].color = vec3(0, 0, 0);
   
     gl_PrimitiveIndicesNV[0] = 0;
     gl_PrimitiveIndicesNV[1] = 1;
     gl_PrimitiveIndicesNV[2] = 2;
-    gl_PrimitiveIndicesNV[3] = 2;
-    gl_PrimitiveIndicesNV[4] = 1;
-    gl_PrimitiveIndicesNV[5] = 3;
   
-    gl_PrimitiveCountNV = 2;
+    gl_PrimitiveCountNV = 1;
   } else {
     gl_PrimitiveCountNV = 0;
   }

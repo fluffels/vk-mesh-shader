@@ -14,6 +14,17 @@ vec4 quat_mult(vec4 q1, vec4 q2)
   return qr;
 }
 
+vec4 quaternion_from_angle_axis(float angle, vec3 axis) {
+  vec4 r;
+
+  r.w = cos(angle/2);
+  r.x = axis.x * sin(angle/2);
+  r.y = axis.y * sin(angle/2);
+  r.z = axis.z * sin(angle/2);
+
+  return r;
+}
+
 vec4 rotate_vertex_position(vec4 q, vec4 position)
 { 
   vec4 q_conj = quat_conj(q);
