@@ -26,23 +26,21 @@ vec4 lerp(vec4 v0, vec4 v1, float a) {
  
 void main()
 {
+  const float width = .25f;
+  const float halfWidth = width * 0.5f;
+
   const uint i = gl_WorkGroupID.x;
   vec4 p = vertices[i].position;
+
+  const float rY = p.w;
 
   vec4 p0 = vec4(p.x, -p.z, p.y, 1);
   p0 -= uniforms.eye;
   p0 = rotate_vertex_position(uniforms.rotation, p0);
 
   if (p0.z > 0) {
-    const float d = .25f;
-    const float halfD = d * 0.5f;
-    const float r = p.w;
-    const float halfR = r * 0.5f;
-    const float x = halfD * cos(r);
-    const float y = halfD * sin(r);
-
-    p0.x += cos(halfR);
-    p0.z += sin(halfR);
+    const float x = halfWidth * cos(rY);
+    const float y = halfWidth * sin(rY);
 
     vec4 p1 = vec4(p.x + x, 0, p.y + y, 1);
     p1 -= uniforms.eye;
