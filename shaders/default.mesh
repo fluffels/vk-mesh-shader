@@ -5,7 +5,7 @@
 #include "quaternion.glsl"
  
 layout(local_size_x=1) in;
-layout(triangles, max_vertices=4, max_primitives=2) out;
+layout(triangles, max_vertices=15, max_primitives=5) out;
 
 struct Vertex {
   vec4 position;
@@ -19,6 +19,10 @@ layout (location=0) out PerVertexData
 {
   vec3 color;
 } v_out[];  // [max_vertices]
+
+vec4 lerp(vec4 v0, vec4 v1, float a) {
+  return vec4(a*v0.xyz + (1-a)*v1.xyz, 1);
+}
  
 void main()
 {
@@ -40,23 +44,53 @@ void main()
     p1 -= uniforms.eye;
     p1 = rotate_vertex_position(uniforms.rotation, p1);
 
+    vec4 p3 = lerp(p0, p1, 0.33f);
+    vec4 p5 = lerp(p0, p1, 0.67f);
+
     vec4 p2 = vec4(p.x - x, 0, p.y - y, 1);
     p2 -= uniforms.eye;
     p2 = rotate_vertex_position(uniforms.rotation, p2);
 
+    vec4 p4 = lerp(p0, p2, 0.33f);
+    vec4 p6 = lerp(p0, p2, 0.67f);
+
     gl_MeshVerticesNV[0].gl_Position = uniforms.proj * p0; 
     gl_MeshVerticesNV[1].gl_Position = uniforms.proj * p1; 
     gl_MeshVerticesNV[2].gl_Position = uniforms.proj * p2; 
+    gl_MeshVerticesNV[3].gl_Position = uniforms.proj * p3; 
+    gl_MeshVerticesNV[4].gl_Position = uniforms.proj * p4; 
+    gl_MeshVerticesNV[5].gl_Position = uniforms.proj * p5; 
+    gl_MeshVerticesNV[6].gl_Position = uniforms.proj * p6; 
   
     v_out[0].color = vec3(0, 1, 0);
     v_out[1].color = vec3(0, 0, 0);
     v_out[2].color = vec3(0, 0, 0);
+    v_out[3].color = vec3(0, 0.33, 0);
+    v_out[4].color = vec3(0, 0.33, 0);
+    v_out[5].color = vec3(0, 0.67, 0);
+    v_out[6].color = vec3(0, 0.67, 0);
   
-    gl_PrimitiveIndicesNV[0] = 0;
+    gl_PrimitiveIndicesNV[0] = 3;
     gl_PrimitiveIndicesNV[1] = 1;
     gl_PrimitiveIndicesNV[2] = 2;
   
-    gl_PrimitiveCountNV = 1;
+    gl_PrimitiveIndicesNV[3] = 4;
+    gl_PrimitiveIndicesNV[4] = 3;
+    gl_PrimitiveIndicesNV[5] = 2;
+  
+    gl_PrimitiveIndicesNV[6] = 5;
+    gl_PrimitiveIndicesNV[7] = 3;
+    gl_PrimitiveIndicesNV[8] = 4;
+  
+    gl_PrimitiveIndicesNV[9] = 6;
+    gl_PrimitiveIndicesNV[10] = 5;
+    gl_PrimitiveIndicesNV[11] = 4;
+  
+    gl_PrimitiveIndicesNV[12] = 0;
+    gl_PrimitiveIndicesNV[13] = 5;
+    gl_PrimitiveIndicesNV[14] = 6;
+  
+    gl_PrimitiveCountNV = 5;
   } else {
     gl_PrimitiveCountNV = 0;
   }
