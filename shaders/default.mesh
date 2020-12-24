@@ -24,6 +24,21 @@ layout (location=0) out PerVertexData
 vec4 lerp(vec4 v0, vec4 v1, float a) {
   return vec4(a*v0.xyz + (1-a)*v1.xyz, 1);
 }
+
+vec4 rotate(vec4 p, float rY, float rZ) {
+  const float sinRz = sin(rZ);
+  const float coAngle = 3.14f / 2.f - rY;
+
+  const float xDelta = cos(coAngle) * sinRz;
+  const float zDelta = sin(coAngle) * sinRz;
+
+  vec4 result = vec4(p.x, p.y, p.z, 1);
+  result.x += xDelta;
+  result.z += zDelta;
+  result -= uniforms.eye;
+  result = rotate_vertex_position(uniforms.rotation, result);
+  return result;
+}
  
 void main()
 {
@@ -35,14 +50,7 @@ void main()
   vec4 p = vertex.position;
   vec4 r = vertex.rotation;
 
-  const float sinRz = sin(r.z);
-  const float coAngle = 3.14f / 2.f - r.y;
-
-  vec4 p0 = vec4(p.x, p.y, p.z, 1);
-  p0.x += cos(coAngle) * sinRz;
-  p0.z += sin(coAngle) * sinRz;
-  p0 -= uniforms.eye;
-  p0 = rotate_vertex_position(uniforms.rotation, p0);
+  vec4 p0 = rotate(p, r.y, 0);
 
   if (p0.z > 0) {
     const float x = halfWidth * cos(r.y);
@@ -52,15 +60,19 @@ void main()
     p1 -= uniforms.eye;
     p1 = rotate_vertex_position(uniforms.rotation, p1);
 
-    vec4 p3 = lerp(p0, p1, 0.33f);
-    vec4 p5 = lerp(p0, p1, 0.67f);
-
     vec4 p2 = vec4(p.x - x, 0, p.z - z, 1);
     p2 -= uniforms.eye;
     p2 = rotate_vertex_position(uniforms.rotation, p2);
 
+    vec4 p3 = lerp(p0, p1, 0.33f);
     vec4 p4 = lerp(p0, p2, 0.33f);
-    vec4 p6 = lerp(p0, p2, 0.67f);
+
+    p0 = rotate(p, r.y, r.z * 0.8f);
+
+    vec4 p5 = lerp(p0, p3, 0.67f);
+    vec4 p6 = lerp(p0, p4, 0.67f);
+
+    p0 = rotate(p, r.y, r.z);
 
     gl_MeshVerticesNV[0].gl_Position = uniforms.proj * p0; 
     gl_MeshVerticesNV[1].gl_Position = uniforms.proj * p1; 
