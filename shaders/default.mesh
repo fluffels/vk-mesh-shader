@@ -37,8 +37,12 @@ void main()
     const float d = .25f;
     const float halfD = d * 0.5f;
     const float r = p.w;
+    const float halfR = r * 0.5f;
     const float x = halfD * cos(r);
     const float y = halfD * sin(r);
+
+    p0.x += cos(halfR);
+    p0.z += sin(halfR);
 
     vec4 p1 = vec4(p.x + x, 0, p.y + y, 1);
     p1 -= uniforms.eye;
