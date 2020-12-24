@@ -12,6 +12,7 @@
 #pragma pack (push, 1)
 struct Vertex {
     Vec4 position;
+    Vec4 rotation;
 };
 #pragma pack (pop)
 
@@ -39,7 +40,8 @@ void generateVertices(vector<Vertex>& vertices) {
             v.position.x = xi * cellSize + offsetX;
             v.position.y = -((rand() / (float)RAND_MAX) + .5f);
             v.position.z = zi * cellSize + offsetZ;
-            v.position.w = (rand() / (float)RAND_MAX) * 2 * 3.14f;
+            v.rotation.y = (rand() / (float)RAND_MAX) * 2 * 3.14f;
+            v.rotation.z = (rand() / (float)RAND_MAX) * 0.5f * 3.14f - (0.25f * 3.14f);
         }
     }
 

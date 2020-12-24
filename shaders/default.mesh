@@ -9,6 +9,7 @@ layout(triangles, max_vertices=15, max_primitives=5) out;
 
 struct Vertex {
   vec4 position;
+  vec4 rotation;
 };
 
 layout(binding=1) readonly buffer Vertices {
@@ -30,17 +31,22 @@ void main()
   const float halfWidth = width * 0.5f;
 
   const uint i = gl_WorkGroupID.x;
-  vec4 p = vertices[i].position;
+  Vertex vertex = vertices[i];
+  vec4 p = vertex.position;
+  vec4 r = vertex.rotation;
 
-  const float rY = p.w;
+  const float sinRz = sin(r.z);
+  const float coAngle = 3.14f / 2.f - r.y;
 
   vec4 p0 = vec4(p.x, p.y, p.z, 1);
+  p0.x += cos(coAngle) * sinRz;
+  p0.z += sin(coAngle) * sinRz;
   p0 -= uniforms.eye;
   p0 = rotate_vertex_position(uniforms.rotation, p0);
 
   if (p0.z > 0) {
-    const float x = halfWidth * cos(rY);
-    const float z = halfWidth * sin(rY);
+    const float x = halfWidth * cos(r.y);
+    const float z = halfWidth * sin(r.y);
 
     vec4 p1 = vec4(p.x + x, 0, p.z + z, 1);
     p1 -= uniforms.eye;
