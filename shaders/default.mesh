@@ -34,22 +34,22 @@ void main()
 
   const float rY = p.w;
 
-  vec4 p0 = vec4(p.x, -p.z, p.y, 1);
+  vec4 p0 = vec4(p.x, p.y, p.z, 1);
   p0 -= uniforms.eye;
   p0 = rotate_vertex_position(uniforms.rotation, p0);
 
   if (p0.z > 0) {
     const float x = halfWidth * cos(rY);
-    const float y = halfWidth * sin(rY);
+    const float z = halfWidth * sin(rY);
 
-    vec4 p1 = vec4(p.x + x, 0, p.y + y, 1);
+    vec4 p1 = vec4(p.x + x, 0, p.z + z, 1);
     p1 -= uniforms.eye;
     p1 = rotate_vertex_position(uniforms.rotation, p1);
 
     vec4 p3 = lerp(p0, p1, 0.33f);
     vec4 p5 = lerp(p0, p1, 0.67f);
 
-    vec4 p2 = vec4(p.x - x, 0, p.y - y, 1);
+    vec4 p2 = vec4(p.x - x, 0, p.z - z, 1);
     p2 -= uniforms.eye;
     p2 = rotate_vertex_position(uniforms.rotation, p2);
 

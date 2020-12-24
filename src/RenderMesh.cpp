@@ -37,8 +37,8 @@ void generateVertices(vector<Vertex>& vertices) {
             auto offsetX = (rand() / (float)RAND_MAX) * cellSize;
             auto offsetZ = (rand() / (float)RAND_MAX) * cellSize;
             v.position.x = xi * cellSize + offsetX;
-            v.position.y = zi * cellSize + offsetZ;
-            v.position.z = (rand() / (float)RAND_MAX) + .5f;
+            v.position.y = -((rand() / (float)RAND_MAX) + .5f);
+            v.position.z = zi * cellSize + offsetZ;
             v.position.w = (rand() / (float)RAND_MAX) * 2 * 3.14f;
         }
     }
