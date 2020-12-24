@@ -1,5 +1,9 @@
 # Geometric Grass Via Mesh Shader Example
 
+## Advanages
+
+1. Culling before geometry generation.
+
 ## TODO
 
 1. Make grass field infinite by taking modulo of eye position in shader.
