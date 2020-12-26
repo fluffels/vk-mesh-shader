@@ -37,9 +37,13 @@ vec4 rotate(vec4 p, float rY, float rZ) {
   vec4 result = vec4(p.x, p.y, p.z, 1);
   result.x += xDelta;
   result.z += zDelta;
-  result -= uniforms.eye;
-  result = rotate_vertex_position(uniforms.rotation, result);
   return result;
+}
+
+vec4 to_view(vec4 vertex) {
+  vertex -= uniforms.eye;
+  vertex = rotate_vertex_position(uniforms.rotation, vertex);
+  return vertex;
 }
  
 void main()
@@ -59,12 +63,7 @@ void main()
     const float z = halfWidth * sin(r.y);
 
     vec4 p1 = vec4(p.x + x, 0, p.z + z, 1);
-    p1 -= uniforms.eye;
-    p1 = rotate_vertex_position(uniforms.rotation, p1);
-
     vec4 p2 = vec4(p.x - x, 0, p.z - z, 1);
-    p2 -= uniforms.eye;
-    p2 = rotate_vertex_position(uniforms.rotation, p2);
 
     vec4 p3 = lerp(p0, p1, 0.33f);
     vec4 p4 = lerp(p0, p2, 0.33f);
@@ -75,6 +74,14 @@ void main()
     vec4 p6 = lerp(p0, p4, 0.67f);
 
     p0 = rotate(p, r.y, r.z);
+
+    p0 = to_view(p0);
+    p1 = to_view(p1);
+    p2 = to_view(p2);
+    p3 = to_view(p3);
+    p4 = to_view(p4);
+    p5 = to_view(p5);
+    p6 = to_view(p6);
 
     gl_MeshVerticesNV[0].gl_Position = uniforms.proj * p0; 
     gl_MeshVerticesNV[1].gl_Position = uniforms.proj * p1; 
