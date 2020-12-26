@@ -40,6 +40,8 @@ void generateVertices(vector<Vertex>& vertices) {
             v.position.x = xi * cellSize + offsetX;
             v.position.y = -((rand() / (float)RAND_MAX) + .5f);
             v.position.z = zi * cellSize + offsetZ;
+            v.position.w = xi / (float)gridWidth;
+            v.rotation.x = zi / (float)gridHeight;
             v.rotation.y = (rand() / (float)RAND_MAX) * 2 * 3.14f;
             v.rotation.z = (rand() / (float)RAND_MAX) * 0.5f * 3.14f - (0.25f * 3.14f);
         }
@@ -66,7 +68,7 @@ void renderMesh(
 
     int x, y, n;
     uint8_t* data = stbi_load(
-        "data/grass.png",
+        "data/noise.png",
         &x, &y, &n, 4
     );
     uint32_t size = x * y * 4;

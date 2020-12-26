@@ -7,6 +7,8 @@
 layout(local_size_x=1) in;
 layout(triangles, max_vertices=15, max_primitives=5) out;
 
+layout(binding=2) uniform sampler2D sp;
+
 struct Vertex {
   vec4 position;
   vec4 rotation;
@@ -81,14 +83,26 @@ void main()
     gl_MeshVerticesNV[4].gl_Position = uniforms.proj * p4; 
     gl_MeshVerticesNV[5].gl_Position = uniforms.proj * p5; 
     gl_MeshVerticesNV[6].gl_Position = uniforms.proj * p6; 
+
+    const vec3 black = vec3(0, 0, 0);
+    const vec3 green = vec3(0, 0.7, 0);
+    const vec3 yellow = vec3(0.7, 0.7, 0);
+
+    vec2 texCoord = vec2(p.w, r.x);
+    vec4 texValue = texture(sp, texCoord);
+    float noiseValue = texValue.x;
+
+    const vec3 color = mix(green, yellow, noiseValue);
+    const vec3 thirdColor = mix(black, color, 0.33);
+    const vec3 twoThirdsColor = mix(black, color, 0.67);
   
-    v_out[0].color = vec3(0, 1, 0);
-    v_out[1].color = vec3(0, 0, 0);
-    v_out[2].color = vec3(0, 0, 0);
-    v_out[3].color = vec3(0, 0.33, 0);
-    v_out[4].color = vec3(0, 0.33, 0);
-    v_out[5].color = vec3(0, 0.67, 0);
-    v_out[6].color = vec3(0, 0.67, 0);
+    v_out[0].color = color;
+    v_out[1].color = black;
+    v_out[2].color = black;
+    v_out[3].color = thirdColor;
+    v_out[4].color = thirdColor;
+    v_out[5].color = twoThirdsColor;
+    v_out[6].color = twoThirdsColor;
   
     gl_PrimitiveIndicesNV[0] = 3;
     gl_PrimitiveIndicesNV[1] = 1;
